@@ -33,7 +33,6 @@ class Images extends Component {
 
         //send all the form data along with the files:
         this.on("sendingmultiple", function (data, xhr, formData) {
-          console.log("HERE!!");
           formData.append("userName", document.getElementById("userName").value);
         });
       }

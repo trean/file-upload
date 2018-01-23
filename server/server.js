@@ -7,16 +7,16 @@ const express    = require('express'),
       port       = process.env.PORT || '80',
       url        = require('url'),
       fs         = require('fs'),
+      path       = require('path'),
 
       mongoose   = require('mongoose'),
-
       Client     = require('./client-schema'),
 
       multer     = require('multer'),
       multerConf = {
         storage   : multer.diskStorage({
           destination: function (req, res, next) {
-            next(null, __dirname + '/../uploads/');
+            next(null, path.join(__dirname, '..', 'uploads'));
           },
           filename   : function (req, file, next) {
             //const ext = file.mimetype.split('/')[1];
@@ -28,17 +28,15 @@ const express    = require('express'),
           const doc = file.mimetype.endsWith('/msword'),
                 pdf = file.mimetype.endsWith('/pdf');
           if (doc || pdf) {
-            console.log('ok');
             next(null, true);
           } else {
             next({message: 'File type not supported'}, false);
           }
         }
-      },
-      upload = multer().array('files');
+      };
 
-
-let app = express();
+let app    = express();
+let upload = multer(multerConf).array('files');
 
 // connect to mongo
 mongoose.connect('mongodb://localhost:27017/file-uploader');
@@ -82,20 +80,8 @@ app.post('/upload', function (req, res) {
       // An error occurred when uploading
       return null;
     }
-    console.log('/upload');
-    console.log(req.files);
-    console.log(req.body);
-    console.log(req.query);
-
     let client = new Client({clientName: req.body.userName});
-
-    client.save().then((model) => {
-      console.log(model);
-    }).catch(error => console.log(error));
-    //console.log(req.body);
-
-
-    // TODO: call client.saveToDB()
+    processUploadedData(client, req);
     res.send('this is upload');
   });
 });
@@ -105,9 +91,38 @@ app.post('/upload', function (req, res) {
  * use client id to create dir
  * @param dir
  */
-function createClienDir(dir) {
-  if (!fs.existsSync(dir)) {
-    fs.mkdirSync(dir);
-  }
+function createClientDir(dir) {
+  return new Promise((resolve, reject) => {
+    if (!fs.existsSync(dir)) {
+      let pathToUserDir = path.join(__dirname, '..', 'uploads', dir);
+      fs.mkdirSync(pathToUserDir);
+      resolve(pathToUserDir)
+    } else {
+      reject('path exists');
+    }
+
+  }).catch(err => console.err(err));
 }
 
+
+function moveFileToUserDir(oldPath, newPath) {
+  fs.rename(oldPath, newPath, function (err) {
+    if (err) throw err;
+  });
+}
+
+
+function processUploadedData(client, req) {
+  client.save().then((model) => {
+    let userId = model._id.toString();
+    return createClientDir(userId);
+  }).then(pathToUserDir => {
+    req.files.forEach(file => {
+      //TODO: move to user dir
+      let processedFileName = /\s/.test(file.originalname) ? file.originalname.split(' ').join('_') : file.originalname,
+          oldPathToFile     = path.join(__dirname, '..', 'uploads', file.originalname),
+          newPathToFile     = path.join(pathToUserDir, processedFileName);
+      moveFileToUserDir(oldPathToFile, newPathToFile);
+    });
+  }).catch(error => console.log(error));
+}
