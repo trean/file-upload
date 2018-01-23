@@ -8,10 +8,7 @@ let ClientSchema = new Schema({
     type    : String,
     required: true
   },
-  files     : {
-    type     : Array,
-    "default": []
-  }
+  files     : [{path: String}]
 });
 
 

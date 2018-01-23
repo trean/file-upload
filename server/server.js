@@ -106,23 +106,51 @@ function createClientDir(dir) {
 
 
 function moveFileToUserDir(oldPath, newPath) {
-  fs.rename(oldPath, newPath, function (err) {
-    if (err) throw err;
-  });
+  return new Promise((resolve, reject) => {
+
+    fs.rename(oldPath, newPath, function (err) {
+      if (err) {
+        //throw err;
+        reject(err);
+      }
+      resolve(newPath);
+    });
+  }).catch(err => console.error(err));
 }
 
 
 function processUploadedData(client, req) {
+  let userId = null;
   client.save().then((model) => {
-    let userId = model._id.toString();
-    return createClientDir(userId);
-  }).then(pathToUserDir => {
-    req.files.forEach(file => {
-      //TODO: move to user dir
-      let processedFileName = /\s/.test(file.originalname) ? file.originalname.split(' ').join('_') : file.originalname,
-          oldPathToFile     = path.join(__dirname, '..', 'uploads', file.originalname),
-          newPathToFile     = path.join(pathToUserDir, processedFileName);
-      moveFileToUserDir(oldPathToFile, newPathToFile);
-    });
-  }).catch(error => console.log(error));
+    userId = model._id;
+    return createClientDir(userId.toString());
+  })
+    .then(pathToUserDir => {
+      req.files.forEach(file => {
+        let processedFileName = /\s/.test(file.originalname) ? file.originalname.split(' ').join('_') : file.originalname,
+            // TODO: fix paths
+            oldPathToFile     = path.join(__dirname, '..', 'uploads', file.originalname),
+            newPathToFile     = path.join(pathToUserDir, processedFileName);
+        moveFileToUserDir(oldPathToFile, newPathToFile)
+          .then(newFilePath => {
+            updateClientFilesAtDB(Client, newFilePath, userId);
+          }).catch(error => console.log(error));
+      })
+    })
+    .catch(error => console.log(error));
+}
+
+
+// TODO: update array
+function updateClientFilesAtDB(client, pathToFil, clientid) {
+  client.findByIdAndUpdate(
+    clientid,
+    {$set: {'files': {path: pathToFil}}},
+    {
+      upsert: true
+    },
+    function (err, model) {
+      console.log(err, model);
+    }
+  );
 }
