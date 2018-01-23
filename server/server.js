@@ -9,10 +9,8 @@ const express    = require('express'),
       fs         = require('fs'),
 
       mongoose   = require('mongoose'),
-      //Schema     = mongoose.Schema,
-      //ObjectId   = Schema.ObjectId,
 
-      //client = require('./client-model'),
+      Client     = require('./client-schema'),
 
       multer     = require('multer'),
       multerConf = {
@@ -37,13 +35,13 @@ const express    = require('express'),
           }
         }
       },
-      upload = multer().any('file');
+      upload = multer().array('files');
 
 
 let app = express();
 
 // connect to mongo
-mongoose.connect('mongodb://localhost:27017', 'file-uploader');
+mongoose.connect('mongodb://localhost:27017/file-uploader');
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
@@ -77,6 +75,7 @@ app.listen(port, function () {
 });
 
 app.post('/upload', function (req, res) {
+
   upload(req, res, function (err) {
     if (err) {
       console.error(err);
@@ -84,12 +83,18 @@ app.post('/upload', function (req, res) {
       return null;
     }
     console.log('/upload');
-    console.log(req.file);
-    //if (req.file) {
-    //  req.body.file = req.file['filename'];
-    //}
-    //client.saveNewClientByName();
+    console.log(req.files);
     console.log(req.body);
+    console.log(req.query);
+
+    let client = new Client({clientName: req.body.userName});
+
+    client.save().then((model) => {
+      console.log(model);
+    }).catch(error => console.log(error));
+    //console.log(req.body);
+
+
     // TODO: call client.saveToDB()
     res.send('this is upload');
   });

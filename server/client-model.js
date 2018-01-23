@@ -1,5 +1,5 @@
 'use strict';
-const Client = require('./client-schema');
+let Client = require('./client-schema');
 
 module.exports.Client = function () {
   let that = this;
@@ -33,5 +33,5 @@ module.exports.Client = function () {
   };
 
 
-
+  return that;
 };

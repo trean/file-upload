@@ -6,11 +6,12 @@ import './../../node_modules/dropzone/dist/dropzone.css'
 class Images extends Component {
 
   componentDidMount() {
-    //let myDropzone = new Dropzone("div.dropzone", {url: "/upload"});
-    //let t = this;
+    function fileParamName() {
+      return 'files'
+    }
 
     Dropzone.options.myDropzone = {
-      paramName: 'file',
+      paramName       : fileParamName,
       url             : '/upload',
       autoProcessQueue: false,
       uploadMultiple  : true,
@@ -32,6 +33,7 @@ class Images extends Component {
 
         //send all the form data along with the files:
         this.on("sendingmultiple", function (data, xhr, formData) {
+          console.log("HERE!!");
           formData.append("userName", document.getElementById("userName").value);
         });
       }
@@ -42,7 +44,7 @@ class Images extends Component {
   render() {
     return (
       <div>
-        <form action="/upload" encType="multipart/form-data" method="POST">
+        <form action="/upload" enctype="multipart/form-data" method="POST">
           <input id="userName" type="text" name="userName" placeholder="Client Name"/>
           <div className="dropzone" id="myDropzone"></div>
           <button type="submit" id="submit-all"> upload</button>
