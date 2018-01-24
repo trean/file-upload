@@ -1,5 +1,9 @@
+@import url('./../../node_modules/dropzone/dist/basic.css');
+@import url('./../../node_modules/dropzone/dist/dropzone.css');
+
 body {
   margin: 0;
   padding: 0;
   font-family: sans-serif;
 }
+
