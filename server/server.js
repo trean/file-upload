@@ -104,7 +104,7 @@ app.post('/upload', function (req, res) {
  * This API will return list of all clients with ids and name
  */
 app.get('/clients', function(req, res) {
-  Client.find({}, '_id clientName', function(err, docs){
+  Client.find({}, function(err, docs){
     res.send(docs);
   })
 });
