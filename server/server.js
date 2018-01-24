@@ -140,7 +140,7 @@ app.post('/client/:clientId/upload', function(req, res){
           console.log(err);
           res.status(400).send('error');
         }else{
-          res.send('ok')
+          res.send('ok');
         }
       });
     })
@@ -170,9 +170,9 @@ app.delete('/client/:clientId/file/:fileId', function(req, res){
         doc.save().then((doc) => {
           let filePath = path.join(staticDir, fileToRemove.path);
           fs.unlink(filePath, (err) => res.send('ok'));
-        }).catch((err) => res.status(400).send(err))
+        }).catch((err) => res.status(400).send(err));
       }else{
-        res.status(404).send("File not found")
+        res.status(404).send("File not found");
       }
     }else{
       res.status(404).send(err);
@@ -190,7 +190,7 @@ function createClientDir(dir) {
     if (!fs.existsSync(dir)) {
       let pathToUserDir = path.join(uploadsDir, dir);
       fs.mkdirSync(pathToUserDir);
-      resolve(pathToUserDir)
+      resolve(pathToUserDir);
     } else {
       reject('path exists');
     }
@@ -248,7 +248,7 @@ app.get('/client/:clientId/test', function(req, res){
   Client.findOne({_id: req.params.clientId}, function(err, doc){
     if(!err && doc){
       updateClientFilesAtDB(doc, "TEST_PATH2", (err, model) => {
-        if(err) res.status(400)
+        if(err) res.status(400);
         console.log(err, model);
         res.send(model)
       })
