@@ -66,17 +66,6 @@ app.use(function (req, res, next) {
   }
 });
 
-app.engine('html', require('ejs').__express);
-app.set('views', __dirname + '/../app/build');
-app.set('view engine', 'ejs');
-
-app.use('/static', express.static(path.join(rootDir, 'static')))
-
-app.use('/', express.static(__dirname + '/../app/build'));
-app.get('/', function (req, res) {
-  res.render('index.html');
-});
-
 app.listen(port, function () {
   console.log('Server listening on port ' + port + '!');
 });
