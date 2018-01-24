@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import Dropzone from 'dropzone';
+import {Link} from 'react-router-dom';
 
 class Details extends Component {
 
@@ -41,7 +42,7 @@ class Details extends Component {
 
   render() {
     if (!this.props.client) {
-      return (<p>Choose client.</p>);
+      return (<p>Choose <Link to="/list">client</Link>.</p>);
     }
 
     // prepare files to view

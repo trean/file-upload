@@ -1,19 +1,19 @@
 import React, {Component} from 'react';
 import Dropzone from 'dropzone';
-import './../../node_modules/dropzone/dist/basic.css';
-import './../../node_modules/dropzone/dist/dropzone.css';
 
 
 class Images extends Component {
 
   componentDidMount() {
+    this.uploadUrl = 'http://localhost:8090/upload';
+
     function fileParamName() {
       return 'files'
     }
 
     Dropzone.options.myDropzone = {
       paramName       : fileParamName,
-      url             : 'http://localhost:8090/upload',
+      url             : this.uploadUrl,
       autoProcessQueue: false,
       uploadMultiple  : true,
       parallelUploads : 5,
@@ -44,10 +44,10 @@ class Images extends Component {
   render() {
     return (
       <div>
-        <form action="/upload" enctype="multipart/form-data" method="POST">
+        <form action={this.uploadUrl} enctype="multipart/form-data" method="POST">
           <input id="userName" type="text" name="userName" placeholder="Client Name"/>
           <div className="dropzone" id="myDropzone"></div>
-          <button type="submit" id="submit-all"> upload</button>
+          <button type="submit" id="submit-all"> Save</button>
 
         </form>
       </div>

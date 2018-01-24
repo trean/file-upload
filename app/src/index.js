@@ -4,26 +4,22 @@ import './index.css';
 import {Provider} from 'react-redux';
 import {createStore} from 'redux';
 import allReducers from './reducers';
-import ClientsList from './components/ClientsList';
+import {BrowserRouter} from 'react-router-dom';
+import App from './components/App';
 
 
 const store = createStore(allReducers);
 
-//const Root = () => (
-//  <Router>
-//    <Route path="/" component={App}/>
-//  </Router>
-//)
-
-//import App from './App';
 //import registerServiceWorker from './registerServiceWorker';
-
-{/*ReactDOM.render(<App />, document.getElementById('root'));*/
-}
-//registerServiceWorker();
 
 ReactDOM.render(
   <Provider store={store}>
-    <ClientsList />
+    <BrowserRouter>
+      <App/>
+    </BrowserRouter>
   </Provider>
+
   , document.getElementById('root'));
+
+//registerServiceWorker();
+

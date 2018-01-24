@@ -2,20 +2,24 @@ import React, {Component} from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {select} from '../actions/index';
+import {Link} from 'react-router-dom';
 
 class ClientsContainer extends Component {
   showList() {
     return this.props.clients.map(client => {
       return (
-        <li onClick={() => this.props.select(client)} key={client.id}>{client.name}</li>
+        <li onClick={() => this.props.select(client)} key={client.id}><Link
+          to="/details">{client.name}</Link></li>
       )
     })
   }
   render() {
     return (
-      <ul>
-        {this.showList()}
-      </ul>
+      <div>
+        <ul>
+          {this.showList()}
+        </ul>
+      </div>
     );
   }
 }
