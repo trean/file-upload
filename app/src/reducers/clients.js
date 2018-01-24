@@ -2,17 +2,17 @@ export default function () {
   return [
     {
       id   : 1,
-      name : 'olol',
+      name : 'Vasya Ivanov',
       files: [
-        {path: 'ad'},
-        {path: 'df'}
+        {path: '/uploads/2fd343ad/file_1.pdf'},
+        {path: '/uploads/2fd343ad/hello.doc'}
       ]
     }, {
       id   : 2,
-      name : 'assf',
+      name : 'Petr Pupkin',
       files: [
-        {path: 'ad'},
-        {path: 'df'}
+        {path: '/uploads/2fd343ad/file_2.pdf'},
+        {path: '/uploads/2fd343ad/greets.doc'}
       ]
     }
   ]
