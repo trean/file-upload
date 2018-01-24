@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import Dropzone from 'dropzone';
-import './../../node_modules/dropzone/dist/dropzone.css'
+import './../../node_modules/dropzone/dist/basic.css';
+import './../../node_modules/dropzone/dist/dropzone.css';
 
 
 class Images extends Component {
@@ -12,7 +13,7 @@ class Images extends Component {
 
     Dropzone.options.myDropzone = {
       paramName       : fileParamName,
-      url             : '/upload',
+      url             : 'http://localhost:8090/upload',
       autoProcessQueue: false,
       uploadMultiple  : true,
       parallelUploads : 5,
