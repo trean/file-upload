@@ -15,6 +15,7 @@ const express    = require('express'),
       multer     = require('multer'),
 
       rootDir    = path.join(__dirname, '..'),
+      frontDir = path.join(rootDir, 'app', 'build'),
 
       staticDir  = path.join(rootDir, 'static'),
 
@@ -48,6 +49,9 @@ let upload = multer(multerConf).array('files');
 // connect to mongo
 mongoose.connect('mongodb://localhost:27017/file-uploader');
 
+app.use('/', express.static(frontDir));
+app.use('/static', express.static(path.join(rootDir, 'static')));
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(function (req, res, next) {
@@ -68,6 +72,11 @@ app.use(function (req, res, next) {
 
 app.listen(port, function () {
   console.log('Server listening on port ' + port + '!');
+});
+
+app.get('/', function (req, res) {
+  res.sendFile(path.join(frontDir, 'index.html', {root: __dirname}));
+
 });
 
 app.post('/upload', function (req, res) {
@@ -231,18 +240,3 @@ function updateClientFilesAtDB(client, pathToFile, callback) {
   client.set('files', files);
   client.save().then((model) => callback(null, model)).catch(callback)
 }
-
-
-app.get('/client/:clientId/test', function(req, res){
-  Client.findOne({_id: req.params.clientId}, function(err, doc){
-    if(!err && doc){
-      updateClientFilesAtDB(doc, "TEST_PATH2", (err, model) => {
-        if(err) res.status(400);
-        console.log(err, model);
-        res.send(model)
-      })
-    }else{
-      res.status(404).send(err);
-    }
-  })
-})
