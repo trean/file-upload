@@ -10,6 +10,7 @@ export default function (state = null, action) {
       return action.payload;
       break;
     case 'FETCH_CLIENT':
+      console.log('fetched state');
       return action.client;
       break;
     case 'DELETE_FILE':

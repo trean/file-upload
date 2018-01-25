@@ -19,12 +19,12 @@ export function updateClient(client) {
   }
 }
 
-export const fetchClient = (client) => {
-  const deleteUrt = '/client/' + client._id;
+export const fetchClient = (clientId) => {
+  const deleteUrt = '/client/' + clientId;
   return dispatch => {
     fetch(deleteUrt, {method: 'GET'})
       .then(client => {
-        console.log(client);
+        console.log('fetched', client);
         dispatch(updateClient(client));
 
       })

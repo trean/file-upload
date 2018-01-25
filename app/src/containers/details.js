@@ -8,14 +8,28 @@ import '../index.css';
 
 class Details extends Component {
 
+  constructor(props) {
+    super(props);
+
+    if (!this.props['client']) {
+      this.props.fetchClient(window.location.href.substr(window.location.href.lastIndexOf('/') + 1));
+
+
+    }
+    this.state = {
+      client: props.client
+    };
+  }
+
   componentDidMount() {
     let context = this;
+
     if (this.props['client']) {
       this.updateUrl = '/client/' + this.props.client._id + '/upload';
 
-    function fileParamName() {
-      return 'files'
-    }
+      function fileParamName() {
+        return 'files'
+      }
 
       const dropzone = new Dropzone("#detDropzone", {
         paramName       : fileParamName,
@@ -26,21 +40,22 @@ class Details extends Component {
         addRemoveLinks  : true,
         init            : function () {
           this.on("complete", function (file) {
-            context.props.fetchClient(context.props.client);
+            new Promise((res) => {
+              res(context.props.fetchClient(context.props.client._id));
+            }).then(() => this.setState({client: context.client.active}));
           })
         }
       });
     }
 
-    this.disableGoAway = function (e, client) {
+
+    this.disableGoAway = function (e) {
       e.preventDefault();
       e.stopPropagation();
       [].forEach.call(document.querySelectorAll("#deleteFile input"), function (element) {
         if (element.checked) {
-          context.props.deleteFile(client, element.value);
-          //element.parentElement.remove();
-          //console.log(context.props.client);
-          context.props.fetchClient(client);
+          context.props.deleteFile(context.props.client, element.value);
+          context.props.fetchClient(context.props.client._id);
         }
       });
     }
@@ -76,7 +91,7 @@ class Details extends Component {
 
           </ul>
           {filesListItems.length > 0 ?
-            <button type="submit" onClick={(e) => this.disableGoAway(e, this.props.client)}>Delete</button> : null}
+            <button type="submit" onClick={(e) => this.disableGoAway(e)}>Delete</button> : null}
         </form>
 
         <form action={this.updateUrl} encType="multipart/form-data" method="POST">

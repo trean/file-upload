@@ -22,7 +22,10 @@ class Header extends Component {
 
         <Route exact path="/" component={Images}/>
         <Route exact path="/list" component={ClientsContainer}/>
-        <Route exact path="/details" component={Details}/>
+        <Route exact path="/details/:clientId" component={Details}/>
+        <Route exact path="/details" render={() => (
+          <h3>Please select <Link to="/list">a client</Link>.</h3>
+        )}/>
       </div>
       </Router>
     )

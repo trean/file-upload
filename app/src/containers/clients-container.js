@@ -10,7 +10,7 @@ class ClientsContainer extends Component {
     return this.props.clients.map(client => {
       return (
         <li onClick={() => this.props.select(client)} key={client.id}><Link
-          to="/details">{client.clientName}</Link></li>
+          to={'/details/' + client._id}>{client.clientName}</Link></li>
       )
     })
   }

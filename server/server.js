@@ -85,6 +85,10 @@ app.get('/details', function (req, res) {
   res.sendFile(frontDir + '/index.html');
 });
 
+app.get('/details/:userId', function (req, res) {
+  res.sendFile(frontDir + '/index.html');
+});
+
 app.post('/upload', function (req, res) {
 
   upload(req, res, function (err) {
