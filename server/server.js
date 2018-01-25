@@ -75,7 +75,14 @@ app.listen(port, function () {
 
 app.get('/', function (req, res) {
   res.sendFile(frontDir + 'index.html', {root: __dirname});
+});
 
+app.get('/list', function (req, res) {
+  res.sendFile(frontDir + '/index.html');
+});
+
+app.get('/details', function (req, res) {
+  res.sendFile(frontDir + '/index.html');
 });
 
 app.post('/upload', function (req, res) {

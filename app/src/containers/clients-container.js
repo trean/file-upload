@@ -3,6 +3,7 @@ import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import {select} from '../actions/index';
 import {Link} from 'react-router-dom';
+import {fetchClientsList} from '../actions/index';
 
 class ClientsContainer extends Component {
   showList() {
@@ -13,6 +14,11 @@ class ClientsContainer extends Component {
       )
     })
   }
+
+  componentDidMount() {
+    this.props.fetchClientsList();
+  }
+
   render() {
     return (
       <div>
@@ -32,7 +38,7 @@ function mapStateToProps(state) {
 }
 
 function matchDispatchToProps(dispatch) {
-  return bindActionCreators({select: select}, dispatch)
+  return bindActionCreators({select: select, fetchClientsList: fetchClientsList}, dispatch)
 }
 
 export default connect(mapStateToProps, matchDispatchToProps)(ClientsContainer);

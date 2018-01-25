@@ -6,9 +6,10 @@ import {deleteFile} from '../actions/index';
 import '../index.css';
 
 class Details extends Component {
+
   componentDidMount() {
     let context = this;
-    this.updateUrl = '/client/' + this.props.client._id + '/upload';
+    if(this.props['clients']) this.updateUrl = '/client/' + this.props.client._id + '/upload';
 
     function fileParamName() {
       return 'files'
@@ -76,7 +77,7 @@ class Details extends Component {
           <ul>
             {filesListItems}
           </ul>
-          <button type="submit" onClick={(e) => this.disableGoAway(e, this.props.client)}>Delete</button>
+          {filesListItems.length > 0 ? <button type="submit" onClick={(e) => this.disableGoAway(e, this.props.client)}>Delete</button> : null}
         </form>
 
         <form action={this.updateUrl} encType="multipart/form-data" method="POST">
