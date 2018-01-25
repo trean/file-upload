@@ -3,18 +3,20 @@ import {connect} from 'react-redux';
 import Dropzone from 'dropzone';
 import {Link} from 'react-router-dom';
 import {deliteFile} from '../actions/index';
+import '../index.css';
 
 class Details extends Component {
   componentDidMount() {
     let context = this;
+    this.updateUrl = '/client/' + this.props.client._id + '/upload';
 
     function fileParamName() {
       return 'files'
     }
     Dropzone.options.detDropzone = {
       paramName       : fileParamName,
-      url             : 'http://localhost:8090/upload',
-      autoProcessQueue: false,
+      url             : '/upload',
+      autoProcessQueue: true,
       uploadMultiple  : true,
       parallelUploads : 5,
       maxFiles        : 5,
@@ -67,7 +69,7 @@ class Details extends Component {
 
     return (
       <div>
-        <h3>{this.props.client.name}</h3>
+        <h3>{this.props.client.clientName}</h3>
         <form id="deleteFile" action={this.deleteUrt} encType="multipart/form-data" method="DELETE">
           <ul>
             {filesListItems}
@@ -75,11 +77,11 @@ class Details extends Component {
           <button type="submit" onClick={(e) => this.disableGoAway(e, this.props.client)}>Delete</button>
         </form>
 
-        <form action="/upload" encType="multipart/form-data" method="POST">
+        <form action={this.updateUrl} encType="multipart/form-data" method="POST">
           <input id="userName" type="text" name="userName" placeholder="Client Name"
                  defaultValue={this.props.client.name} hidden/>
           <div className="dropzone" id="detDropzone"></div>
-          <button type="submit" id="submit-all"> upload</button>
+          {/*<button type="submit" id="submit-all"> upload</button>*/}
 
         </form>
       </div>
