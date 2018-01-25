@@ -4,8 +4,7 @@ import {
   Route,
   Link
 } from 'react-router-dom';
-import Images from './Images';
-//import ClientsContainer from '../containers/clients-container';
+import Images from './UploadNew';
 import ClientsContainer from '../components/ClientsList';
 import Details from '../components/Details';
 

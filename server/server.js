@@ -27,7 +27,6 @@ const express    = require('express'),
             next(null, uploadsDir);
           },
           filename   : function (req, file, next) {
-            //const ext = file.mimetype.split('/')[1];
             next(null, file.originalname);
           }
         }),
@@ -75,7 +74,7 @@ app.listen(port, function () {
 });
 
 app.get('/', function (req, res) {
-  res.sendFile(path.join(frontDir, 'index.html', {root: __dirname}));
+  res.sendFile(frontDir + 'index.html', {root: __dirname});
 
 });
 
@@ -222,10 +221,11 @@ function processUploadedData(client, req, callback) {
         let processedFileName = /\s/.test(file.originalname) ? file.originalname.split(' ').join('_') : file.originalname,
             // TODO: fix paths
             oldPathToFile     = path.join(uploadsDir, file.originalname),
-            newPathToFile     = path.join(pathToUserDir, processedFileName);
+            newPathToFile     = path.join(pathToUserDir, processedFileName),
+            pathFromProjectRoot = path.join('static', 'uploads', userId.toString(), processedFileName);
         moveFileToUserDir(oldPathToFile, newPathToFile)
           .then(newFilePath => {
-            updateClientFilesAtDB(model, newFilePath, callback);
+            updateClientFilesAtDB(client, pathFromProjectRoot, callback);
           }).catch(callback);
       })
     })

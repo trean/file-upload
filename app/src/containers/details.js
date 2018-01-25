@@ -2,10 +2,12 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import Dropzone from 'dropzone';
 import {Link} from 'react-router-dom';
+import {deliteFile} from '../actions/index';
 
 class Details extends Component {
-
   componentDidMount() {
+    let context = this;
+
     function fileParamName() {
       return 'files'
     }
@@ -37,10 +39,20 @@ class Details extends Component {
       }
     }
 
+
+    this.disableGoAway = function (e, client) {
+      e.preventDefault();
+      e.stopPropagation();
+      [].forEach.call(document.querySelectorAll("#deleteFile input"), function (element) {
+        context.props.deliteFile(client, element.value);
+      });
+    }
   }
 
 
   render() {
+    const context        = this;
+
     if (!this.props.client) {
       return (<p>Choose <Link to="/list">client</Link>.</p>);
     }
@@ -48,21 +60,22 @@ class Details extends Component {
     // prepare files to view
     const files          = this.props.client.files;
     const filesListItems = files.map((file, idx) => {
-      let fileName = file.path.match(/[^\\]*\.(\w+)$/)[0] + '.' + file.path.match(/[^\\]*\.(\w+)$/)[1];
-      return <li key={idx}><span>{fileName}</span><input type="checkbox"/></li>
+      context.deleteUrt = '/client/' + context.props.client._id + '/file/' + file._id;
+      let fileName      = file.path.replace(/^.*[\\\/]/, '');
+      return <li key={idx}><a href={file.path}>{fileName}</a><input value={file._id} type="checkbox"/></li>
     });
 
     return (
       <div>
         <h3>{this.props.client.name}</h3>
-        <form action="/delete-file" method="POST">
+        <form id="deleteFile" action={this.deleteUrt} encType="multipart/form-data" method="DELETE">
           <ul>
             {filesListItems}
           </ul>
-          <button type="submit" onClick={(e) => e.preventDefault()}>Delete</button>
+          <button type="submit" onClick={(e) => this.disableGoAway(e, this.props.client)}>Delete</button>
         </form>
 
-        <form action="/upload" enctype="multipart/form-data" method="POST">
+        <form action="/upload" encType="multipart/form-data" method="POST">
           <input id="userName" type="text" name="userName" placeholder="Client Name"
                  defaultValue={this.props.client.name} hidden/>
           <div className="dropzone" id="detDropzone"></div>
@@ -74,12 +87,11 @@ class Details extends Component {
   }
 }
 
-
 // from state to property
 function mapStateToProps(state) {
   return {
-    client: state.active
+    client : state.active
   }
 }
 
-export default connect(mapStateToProps)(Details);
+export default connect(mapStateToProps, {deliteFile})(Details);

@@ -1,11 +1,15 @@
 import React, {Component} from 'react';
+import {connect} from 'react-redux';
+import {fetchClientsList} from '../actions/index';
 import Dropzone from 'dropzone';
 
 
-class Images extends Component {
+class UploadNewContainer extends Component {
 
   componentDidMount() {
-    this.uploadUrl = 'http://localhost:8090/upload';
+    let context = this;
+    this.props.fetchClientsList();
+    this.uploadUrl = '/upload';
 
     function fileParamName() {
       return 'files'
@@ -36,23 +40,37 @@ class Images extends Component {
         this.on("sendingmultiple", function (data, xhr, formData) {
           formData.append("userName", document.getElementById("userName").value);
         });
-      }
 
-    }
+        this.on("complete", function (file) {
+          document.getElementById("uploadNew").reset();
+          dzClosure.removeFile(file);
+
+          context.props.fetchClientsList();
+        });
+      }
+    };
+
   }
 
   render() {
     return (
       <div>
-        <form action={this.uploadUrl} enctype="multipart/form-data" method="POST">
+        <form id="uploadNew" action={this.uploadUrl} encType="multipart/form-data" method="POST">
           <input id="userName" type="text" name="userName" placeholder="Client Name"/>
           <div className="dropzone" id="myDropzone"></div>
           <button type="submit" id="submit-all"> Save</button>
-
         </form>
       </div>
     )
   }
 }
 
-export default Images
+// from state to property
+function mapStateToProps(state) {
+  return {
+    clients: state.clients
+  }
+}
+
+export default connect(mapStateToProps, {fetchClientsList})(UploadNewContainer);
+
