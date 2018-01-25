@@ -94,14 +94,8 @@ app.post('/upload', function (req, res) {
       return null;
     }
     let client = new Client({clientName: req.body.userName});
-    processUploadedData(client, req, function(err, model){
-      if(err){
-        console.log(err);
-        res.status(400).send('error');
-      }else{
-        res.send('ok')
-      }
-    });
+    processUploadedData(client, req).then((model) => res.status(200).send('ok'), (err) => res.status(400).send(err))
+      .catch(console.error);
   });
 });
 
@@ -138,15 +132,9 @@ app.post('/client/:clientId/upload', function(req, res){
       return null;
     }
 
-    Client.findOne({_id: clientId}, function(err, doc){
-      processUploadedData(client, req, function(err, model){
-        if(err){
-          console.log(err);
-          res.status(400).send('error');
-        }else{
-          res.send('ok');
-        }
-      });
+    Client.findOne({_id: clientId}, function(err, client){
+      processUploadedData(client, req).then((model) => res.status(200).send('ok'), res.status(400).send)
+        .catch(err => console.error("HERE", err));
     })
   });
 
@@ -193,12 +181,14 @@ function createClientDir(dir) {
   return new Promise((resolve, reject) => {
     if (!fs.existsSync(dir)) {
       let pathToUserDir = path.join(uploadsDir, dir);
-      fs.mkdirSync(pathToUserDir);
+      try {
+        fs.mkdirSync(pathToUserDir);
+      }catch (error){}
+
       resolve(pathToUserDir);
     } else {
       reject('path exists');
     }
-
   });
 }
 
@@ -217,33 +207,35 @@ function moveFileToUserDir(oldPath, newPath) {
 }
 
 
-function processUploadedData(client, req, callback) {
-  let userId = null;
-  client.save().then((model) => {
-    userId = model._id;
-    return createClientDir(userId.toString());
-  })
-    .then(pathToUserDir => {
-      req.files.forEach(file => {
-        let processedFileName = /\s/.test(file.originalname) ? file.originalname.split(' ').join('_') : file.originalname,
-            // TODO: fix paths
-            oldPathToFile     = path.join(uploadsDir, file.originalname),
-            newPathToFile     = path.join(pathToUserDir, processedFileName),
-            pathFromProjectRoot = path.join('static', 'uploads', userId.toString(), processedFileName);
-        moveFileToUserDir(oldPathToFile, newPathToFile)
-          .then(newFilePath => {
-            updateClientFilesAtDB(client, pathFromProjectRoot, callback);
-          }).catch(callback);
-      })
-    })
-    .catch(callback);
+function processUploadedData(client, req) {
+  return new Promise((resolve, reject) => {
+
+    let userId = null;
+    client.save().then((model) => {
+      userId = model._id;
+      return createClientDir(userId.toString());
+    }, (err) => console.error("Cant save client", err))
+      .then(pathToUserDir => {
+        let filePromises = req.files.map(file => {
+          let processedFileName   = /\s/.test(file.originalname) ? file.originalname.split(' ').join('_') : file.originalname,
+              oldPathToFile       = path.join(uploadsDir, file.originalname),
+              newPathToFile       = path.join(pathToUserDir, processedFileName),
+              pathFromProjectRoot = path.join('static', 'uploads', userId.toString(), processedFileName);
+          return moveFileToUserDir(oldPathToFile, newPathToFile)
+            .then(newFilePath => pathFromProjectRoot);
+        });
+        Promise.all(filePromises).then(filePaths => updateClientFilesAtDB(client, filePaths), reject).then(resolve, reject)
+      });
+  });
 }
 
 
 // TODO: update array
-function updateClientFilesAtDB(client, pathToFile, callback) {
-  let files = client.get('files');
-  files = files.concat([{path: pathToFile}]);
-  client.set('files', files);
-  client.save().then((model) => callback(null, model)).catch(callback)
+function updateClientFilesAtDB(client, pathToFiles) {
+  return new Promise((resolve, reject) => {
+    let files = client.get('files');
+    files     = files.concat(pathToFiles.map(pathToFile=> {return {path: pathToFile}}));
+    client.set('files', files);
+    client.save().then(resolve, err => {console.log("cant write files"); reject(err)} )
+  });
 }
