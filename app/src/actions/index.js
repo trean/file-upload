@@ -21,7 +21,10 @@ export const fetchClientsList = () => {
   return dispatch => {
     fetch('/clients', {method: 'GET'})
       .then(res => res.json())
-      .then(data => dispatch(setClients(data)))
+      .then(data => {
+        console.log(data);
+        dispatch(setClients(data))
+      })
       .catch(e => console.error(e));
   }
 }
@@ -35,7 +38,7 @@ export function updateClient(client) {
   }
 }
 
-export const deliteFile = (client, file) => {
+export const deleteFile = (client, file) => {
   const deleteUrt = '/client/' + client._id + '/file/' + file;
   return dispatch => {
     fetch(deleteUrt, {method: 'DELETE'})
@@ -43,9 +46,11 @@ export const deliteFile = (client, file) => {
         let idx = client.files.findIndex(item => item._id === file);
         client.files.splice(idx, 1);
 
+        console.log(client)
         dispatch(updateClient(client));
 
       })
+      .then(() => fetchClientsList())
       //.then(data => dispatch(setClients(data)))
       .catch(e => console.error(e));
   }

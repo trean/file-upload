@@ -49,6 +49,7 @@ jspm_packages
 .yarn-integrity
 
 tmp
+static/uploads/*
 uploads/*
 .idea
 server.log

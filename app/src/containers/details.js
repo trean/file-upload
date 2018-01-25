@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import Dropzone from 'dropzone';
 import {Link} from 'react-router-dom';
-import {deliteFile} from '../actions/index';
+import {deleteFile} from '../actions/index';
 import '../index.css';
 
 class Details extends Component {
@@ -46,7 +46,9 @@ class Details extends Component {
       e.preventDefault();
       e.stopPropagation();
       [].forEach.call(document.querySelectorAll("#deleteFile input"), function (element) {
-        context.props.deliteFile(client, element.value);
+        context.props.deleteFile(client, element.value);
+        element.parentElement.remove();
+        console.log(context.props.client);
       });
     }
   }
@@ -60,8 +62,8 @@ class Details extends Component {
     }
 
     // prepare files to view
-    const files          = this.props.client.files;
-    const filesListItems = files.map((file, idx) => {
+    const files          = this.props.client.files,
+          filesListItems = files.map((file, idx) => {
       context.deleteUrt = '/client/' + context.props.client._id + '/file/' + file._id;
       let fileName      = file.path.replace(/^.*[\\\/]/, '');
       return <li key={idx}><a href={file.path}>{fileName}</a><input value={file._id} type="checkbox"/></li>
@@ -96,4 +98,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps, {deliteFile})(Details);
+export default connect(mapStateToProps, {deleteFile})(Details);
