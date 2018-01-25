@@ -3,70 +3,61 @@ import {connect} from 'react-redux';
 import Dropzone from 'dropzone';
 import {Link} from 'react-router-dom';
 import {deleteFile} from '../actions/index';
+import {fetchClient} from '../actions/index';
 import '../index.css';
 
 class Details extends Component {
 
   componentDidMount() {
     let context = this;
-    if(this.props['clients']) this.updateUrl = '/client/' + this.props.client._id + '/upload';
+    if (this.props['client']) {
+      this.updateUrl = '/client/' + this.props.client._id + '/upload';
 
     function fileParamName() {
       return 'files'
     }
-    Dropzone.options.detDropzone = {
-      paramName       : fileParamName,
-      url             : '/upload',
-      autoProcessQueue: true,
-      uploadMultiple  : true,
-      parallelUploads : 5,
-      maxFiles        : 5,
-      maxFilesize     : 60,
-      acceptedFiles   : '.doc,.docx,.pdf',
-      addRemoveLinks  : true,
-      init            : function () {
-        let dzClosure = this; // Makes sure that 'this' is understood inside the functions below.
 
-        // for Dropzone to process the queue (instead of default form behavior):
-        document.getElementById("submit-all").addEventListener("click", function (e) {
-          // Make sure that the form isn't actually being sent.
-          e.preventDefault();
-          e.stopPropagation();
-          dzClosure.processQueue();
-        });
-
-        //send all the form data along with the files:
-        this.on("sendingmultiple", function (data, xhr, formData) {
-          formData.append("userName", document.getElementById("userName").value);
-        });
-      }
+      const dropzone = new Dropzone("#detDropzone", {
+        paramName       : fileParamName,
+        url             : context.updateUrl,
+        autoProcessQueue: true,
+        maxFilesize     : 60,
+        acceptedFiles   : '.doc,.docx,.pdf',
+        addRemoveLinks  : true,
+        init            : function () {
+          this.on("complete", function (file) {
+            context.props.fetchClient(context.props.client);
+          })
+        }
+      });
     }
-
 
     this.disableGoAway = function (e, client) {
       e.preventDefault();
       e.stopPropagation();
       [].forEach.call(document.querySelectorAll("#deleteFile input"), function (element) {
-        context.props.deleteFile(client, element.value);
-        element.parentElement.remove();
-        console.log(context.props.client);
+        if (element.checked) {
+          context.props.deleteFile(client, element.value);
+          //element.parentElement.remove();
+          //console.log(context.props.client);
+          context.props.fetchClient(client);
+        }
       });
     }
   }
 
 
   render() {
-    const context        = this;
 
     if (!this.props.client) {
       return (<p>Choose <Link to="/list">client</Link>.</p>);
     }
 
     // prepare files to view
-    const files          = this.props.client.files,
+    const files          = this.props.client.files || [],
           filesListItems = files.map((file, idx) => {
-      context.deleteUrt = '/client/' + context.props.client._id + '/file/' + file._id;
-      let fileName      = file.path.replace(/^.*[\\\/]/, '');
+            this.deleteUrt = '/client/' + this.props.client._id + '/file/' + file._id;
+            let fileName   = file.path.replace(/^.*[\\\/]/, '');
       return <li key={idx}><a href={file.path}>{fileName}</a><input value={file._id} type="checkbox"/></li>
     });
 
@@ -75,17 +66,21 @@ class Details extends Component {
         <h3>{this.props.client.clientName}</h3>
         <form id="deleteFile" action={this.deleteUrt} encType="multipart/form-data" method="DELETE">
           <ul>
-            {filesListItems}
+
+
+            {files.map((file, idx) => {
+              this.deleteUrt = '/client/' + this.props.client._id + '/file/' + file._id;
+              let fileName   = file.path.replace(/^.*[\\\/]/, '');
+              return <li key={idx}><a href={file.path}>{fileName}</a><input value={file._id} type="checkbox"/></li>
+            })}
+
           </ul>
-          {filesListItems.length > 0 ? <button type="submit" onClick={(e) => this.disableGoAway(e, this.props.client)}>Delete</button> : null}
+          {filesListItems.length > 0 ?
+            <button type="submit" onClick={(e) => this.disableGoAway(e, this.props.client)}>Delete</button> : null}
         </form>
 
         <form action={this.updateUrl} encType="multipart/form-data" method="POST">
-          <input id="userName" type="text" name="userName" placeholder="Client Name"
-                 defaultValue={this.props.client.name} hidden/>
           <div className="dropzone" id="detDropzone"></div>
-          {/*<button type="submit" id="submit-all"> upload</button>*/}
-
         </form>
       </div>
     )
@@ -99,4 +94,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps, {deleteFile})(Details);
+export default connect(mapStateToProps, {deleteFile: deleteFile, fetchClient: fetchClient})(Details);

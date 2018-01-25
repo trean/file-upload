@@ -74,7 +74,7 @@ app.listen(port, function () {
 });
 
 app.get('/', function (req, res) {
-  res.sendFile(frontDir + 'index.html', {root: __dirname});
+  res.sendFile(frontDir + '/index.html', {root: __dirname});
 });
 
 app.get('/list', function (req, res) {
@@ -161,7 +161,7 @@ app.delete('/client/:clientId/file/:fileId', function(req, res){
         doc.set('files', filesToKeep);
         doc.save().then((doc) => {
           let filePath = path.join(staticDir, fileToRemove.path);
-          fs.unlink(filePath, (err) => res.send('ok'));
+          fs.unlink(filePath, (err) => res.status(200).send('ok'));
         }).catch((err) => res.status(400).send(err));
       }else{
         res.status(404).send("File not found");

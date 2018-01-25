@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {fetchClientsList} from '../actions/index';
 import Dropzone from 'dropzone';
 
+Dropzone.autoDiscover = false;
 
 class UploadNewContainer extends Component {
 
@@ -15,7 +16,9 @@ class UploadNewContainer extends Component {
       return 'files'
     }
 
-    Dropzone.options.myDropzone = {
+    console.log("DROPZONE PARAMS");
+
+    const dropzone = new Dropzone("#myDropzone", {
       paramName       : fileParamName,
       url             : this.uploadUrl,
       autoProcessQueue: false,
@@ -27,6 +30,8 @@ class UploadNewContainer extends Component {
       addRemoveLinks  : true,
       init            : function () {
         let dzClosure = this; // Makes sure that 'this' is understood inside the functions below.
+
+        console.log("INIT DROPZONE");
 
         // for Dropzone to process the queue (instead of default form behavior):
         document.getElementById("submit-all").addEventListener("click", function (e) {
@@ -48,11 +53,12 @@ class UploadNewContainer extends Component {
           context.props.fetchClientsList();
         });
       }
-    };
+    });
 
   }
 
   render() {
+    console.log("RENDER");
     return (
       <div>
         <form id="uploadNew" action={this.uploadUrl} encType="multipart/form-data" method="POST">

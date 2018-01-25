@@ -1,11 +1,34 @@
 export const SET_CLIENTS = 'SET_CLIENTS';
 export const DELETE_FILE = 'DELETE_FILE';
+export const FETCH_CLIENT = 'DELETE_FILE';
 
 export const select = (client) => {
   return {
     type: 'CLIENT_SELECTED',
     // data
     payload: client
+  }
+}
+
+
+/** fetch one client */
+export function updateClient(client) {
+  return {
+    type: 'FETCH_CLIENT',
+    client
+  }
+}
+
+export const fetchClient = (client) => {
+  const deleteUrt = '/client/' + client._id;
+  return dispatch => {
+    fetch(deleteUrt, {method: 'GET'})
+      .then(client => {
+        console.log(client);
+        dispatch(updateClient(client));
+
+      })
+      .catch(e => console.error(e));
   }
 }
 
@@ -31,7 +54,7 @@ export const fetchClientsList = () => {
 
 
 /** delete file */
-export function updateClient(client) {
+export function updateClientAfterDelete(client) {
   return {
     type: 'DELETE_FILE',
     client
@@ -47,10 +70,9 @@ export const deleteFile = (client, file) => {
         client.files.splice(idx, 1);
 
         console.log(client)
-        dispatch(updateClient(client));
+        dispatch(updateClientAfterDelete(client));
 
       })
-      .then(() => fetchClientsList())
       //.then(data => dispatch(setClients(data)))
       .catch(e => console.error(e));
   }
