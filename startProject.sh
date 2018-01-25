@@ -9,15 +9,12 @@ echo $port
 if [ $command == 'build' ]
 then
     npm install
-fi
-
-[[ -d uploads ]] || mkdir uploads
-PORT=${port} node server/server.js | tee -a server.log 1>/dev/null
-
-cd app
-if [ $command == 'build' ]
-then
+    cd app
     npm install
+    npm build
+    cd ../
 fi
 
-npm start
+[[ -d static ]] && [[ -d static/uploads ]] || mkdir -p static/uploads
+cd server
+PORT=${port} node server.js | tee -a server.log
