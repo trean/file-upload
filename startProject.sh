@@ -11,7 +11,7 @@ then
     npm install
     cd app
     npm install
-    npm build
+    npm run build
     cd ../
 fi
 
