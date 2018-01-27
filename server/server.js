@@ -164,7 +164,7 @@ app.delete('/client/:clientId/file/:fileId', function(req, res){
       if(fileToRemove){
         doc.set('files', filesToKeep);
         doc.save().then((doc) => {
-          let filePath = path.join(staticDir, fileToRemove.path);
+          let filePath = path.join(rootDir, fileToRemove.path);
           fs.unlink(filePath, (err) => res.status(200).send('ok'));
         }).catch((err) => res.status(400).send(err));
       }else{
