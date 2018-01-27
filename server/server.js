@@ -176,6 +176,44 @@ app.delete('/client/:clientId/file/:fileId', function(req, res){
   })
 });
 
+app.post('/client/:clientId/delete_many', function (req, res) {
+  const clientId         = req.params.clientId;
+  const filesToDeleteIds = req.body.files;
+
+  Client.findOne({_id: clientId}, function (err, doc) {
+    if (!err && doc) {
+      const files = doc.get("files");
+
+      const filesToRemove = [];
+      const filesToKeep   = [];
+
+      files.forEach(file => {
+        if (filesToDeleteIds.includes(file._id.toString())) {
+          filesToRemove.push(file)
+        } else {
+          filesToKeep.push(file)
+        }
+      });
+
+
+      if (filesToRemove.length > 0) {
+        doc.set('files', filesToKeep);
+        doc.save().then((doc) => {
+          filesToRemove.forEach(fileToRemove => {
+            let filePath = path.join(staticDir, fileToRemove.path);
+            fs.unlink(filePath, (err) => console.log(err));
+          });
+          res.status(200).send('ok');
+        }).catch((err) => res.status(400).send(err));
+      } else {
+        res.status(404).send("File not found");
+      }
+    } else {
+      res.status(404).send(err);
+    }
+  })
+})
+
 
 /**
  * use client id to create dir
