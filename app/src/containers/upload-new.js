@@ -7,6 +7,11 @@ Dropzone.autoDiscover = false;
 
 class UploadNewContainer extends Component {
 
+  constructor(props) {
+    super(props);
+    this.dropzone = null;
+  }
+
   componentDidMount() {
     let context = this;
     this.props.fetchClientsList();
@@ -16,14 +21,14 @@ class UploadNewContainer extends Component {
       return 'files'
     }
 
-    const dropzone = new Dropzone("#myDropzone", {
+    this.dropzone = new Dropzone("#myDropzone", {
       paramName       : fileParamName,
       url             : this.uploadUrl,
       autoProcessQueue: false,
       uploadMultiple  : true,
       parallelUploads : 5,
       maxFiles        : 5,
-      maxFilesize     : 60,
+      maxFilesize     : 500,
       acceptedFiles   : '.doc,.docx,.pdf',
       addRemoveLinks  : true,
       init            : function () {

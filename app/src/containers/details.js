@@ -12,6 +12,7 @@ class Details extends Component {
   constructor(props) {
     super(props);
     this.updateClient = this.updateClient.bind(this);
+    this.dropzone = null;
   }
 
 
@@ -37,11 +38,11 @@ class Details extends Component {
       this.updateClient(id);
       // TODO: and this
       setTimeout(() => {
-        createDropzone(this.props.client, this.updateClient);
+        createDropzone(this.props.client, this.updateClient, this);
       }, 500);
     } else {
       try {
-        createDropzone(this.props.client, this.updateClient);
+        createDropzone(this.props.client, this.updateClient, this);
       } catch (e) {
         console.warn(e.message);
       }
@@ -106,7 +107,7 @@ class Details extends Component {
 }
 
 
-function createDropzone(client, cb) {
+function createDropzone(client, cb, t) {
 
   const updateUrl = '/client/' + client._id + '/upload';
 
@@ -114,7 +115,7 @@ function createDropzone(client, cb) {
     return 'files'
   }
 
-  const dropzone = new Dropzone("#detDropzone", {
+  t.dropzone = new Dropzone("#detDropzone", {
     paramName       : fileParamName,
     url             : updateUrl,
     autoProcessQueue: true,
