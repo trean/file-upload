@@ -93,7 +93,6 @@ app.post('/upload', function (req, res) {
 
   upload(req, res, function (err) {
     if (err) {
-      console.error(err);
       // An error occurred when uploading
       return null;
     }
@@ -131,7 +130,6 @@ app.post('/client/:clientId/upload', function(req, res){
   const clientId = req.params.clientId;
   upload(req, res, function (err) {
     if (err) {
-      console.error(err);
       // An error occurred when uploading
       return null;
     }
@@ -164,7 +162,7 @@ app.delete('/client/:clientId/file/:fileId', function(req, res){
       if(fileToRemove){
         doc.set('files', filesToKeep);
         doc.save().then((doc) => {
-          let filePath = path.join(rootDir, fileToRemove.path);
+          let filePath = path.join(staticDir, fileToRemove.path);
           fs.unlink(filePath, (err) => res.status(200).send('ok'));
         }).catch((err) => res.status(400).send(err));
       }else{
@@ -200,7 +198,7 @@ app.post('/client/:clientId/delete_many', function (req, res) {
         doc.set('files', filesToKeep);
         doc.save().then((doc) => {
           filesToRemove.forEach(fileToRemove => {
-            let filePath = path.join(staticDir, fileToRemove.path);
+            let filePath = path.join(rootDir, fileToRemove.path);
             fs.unlink(filePath, (err) => console.log(err));
           });
           res.status(200).send('ok');
