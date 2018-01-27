@@ -3,11 +3,10 @@
 
 command=$1
 port=$(( $2 ? $2 : 80 ))
-echo $command
-echo $port
 
 if [ $command == 'build' ]
 then
+    echo 'Wait please, we are building app...'
     npm install
     cd app
     npm install

@@ -1,6 +1,3 @@
-import {DELETE_FILE} from '../actions/index';
-import {FETCH_CLIENT} from '../actions/index';
-
 export default function (state = null, action) {
   switch (action.type) {
     case 'CLIENT_SELECTED':
