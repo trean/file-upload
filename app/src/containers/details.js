@@ -47,15 +47,20 @@ class Details extends Component {
       }
     }
 
-    this.disableGoAway = function (e) {
+    this.deleteFiles = function (e) {
       e.preventDefault();
       e.stopPropagation();
+      let obj   = {};
+      obj.files = [];
       [].forEach.call(document.querySelectorAll("#deleteFile input"), function (element) {
-        if (element.checked) {
-          context.props.deleteFile(context.props.client, element.value);
-          context.updateClient();
-        }
+        if (element.checked) obj.files.push(element.value);
       });
+      if (obj.files.length > 0) {
+        context.props.deleteFile(context.props.client, obj);
+        context.updateClient();
+      } else {
+        console.warn('No selected files to delete');
+      }
     }
   }
 
@@ -89,7 +94,7 @@ class Details extends Component {
 
           </ul>
           {filesListItems.length > 0 ?
-            <button type="submit" onClick={(e) => this.disableGoAway(e)}>Delete</button> : null}
+            <button type="submit" onClick={(e) => this.deleteFiles(e)}>Delete</button> : null}
         </form>
 
         <form action={this.updateUrl} encType="multipart/form-data" method="POST">
@@ -113,7 +118,7 @@ function createDropzone(client, cb) {
     paramName       : fileParamName,
     url             : updateUrl,
     autoProcessQueue: true,
-    maxFilesize     : 60,
+    maxFilesize     : 500,
     acceptedFiles   : '.doc,.docx,.pdf',
     addRemoveLinks  : true,
     init            : function () {

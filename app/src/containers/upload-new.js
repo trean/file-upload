@@ -16,8 +16,6 @@ class UploadNewContainer extends Component {
       return 'files'
     }
 
-    console.log("DROPZONE PARAMS");
-
     const dropzone = new Dropzone("#myDropzone", {
       paramName       : fileParamName,
       url             : this.uploadUrl,
@@ -30,8 +28,6 @@ class UploadNewContainer extends Component {
       addRemoveLinks  : true,
       init            : function () {
         let dzClosure = this; // Makes sure that 'this' is understood inside the functions below.
-
-        console.log("INIT DROPZONE");
 
         // for Dropzone to process the queue (instead of default form behavior):
         document.getElementById("submit-all").addEventListener("click", function (e) {
@@ -58,7 +54,6 @@ class UploadNewContainer extends Component {
   }
 
   render() {
-    console.log("RENDER");
     return (
       <div>
         <form id="uploadNew" action={this.uploadUrl} encType="multipart/form-data" method="POST">

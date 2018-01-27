@@ -54,13 +54,22 @@ export function updateClientAfterDelete(client) {
   }
 }
 
-export const deleteFile = (client, file) => {
-  const deleteUrt = '/client/' + client._id + '/file/' + file;
+export const deleteFile = (client, filesObj) => {
+  const deleteUrt = '/client/' + client._id + '/delete_many';
   return dispatch => {
-    fetch(deleteUrt, {method: 'DELETE'}).then(data => {
+    fetch(deleteUrt, {
+      method : 'POST',
+      headers: {
+        'Accept'      : 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+      },
+      body   : JSON.stringify(filesObj)
+    }).then(data => {
+      filesObj.files.forEach(file => {
         let idx = client.files.findIndex(item => item._id === file);
         client.files.splice(idx, 1);
-        dispatch(updateClientAfterDelete(client));
+      });
+      dispatch(updateClientAfterDelete(client));
     }).catch(e => console.error(e));
   }
 }
