@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import Dropzone from 'dropzone';
+import {bindActionCreators} from 'redux';
 import {Link} from 'react-router-dom';
 import {deleteFile} from '../actions/index';
 import {fetchClient} from '../actions/index';
@@ -10,44 +11,41 @@ class Details extends Component {
 
   constructor(props) {
     super(props);
-
-    if (!this.props['client']) {
-      this.props.fetchClient(window.location.href.substr(window.location.href.lastIndexOf('/') + 1));
-
-
-    }
-    this.state = {
-      client: props.client
-    };
+    this.updateClient = this.updateClient.bind(this);
   }
+
+
+  updateClient(id = this.props.client._id) {
+    return this.props.fetchClient(id);
+  }
+
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.client !== this.props.client) {
+      this.setState({client: nextProps.client});
+      console.log('nextProps', nextProps);
+    }
+  }
+
 
   componentDidMount() {
     let context = this;
-
-    if (this.props['client']) {
-      this.updateUrl = '/client/' + this.props.client._id + '/upload';
-
-      function fileParamName() {
-        return 'files'
+    if (!this.props['client']) {
+      // TODO: there should be more elegant way to do this
+      let id = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
+      console.log(id);
+      this.updateClient(id);
+      // TODO: and this
+      setTimeout(() => {
+        createDropzone(this.props.client, this.updateClient);
+      }, 500);
+    } else {
+      try {
+        createDropzone(this.props.client, this.updateClient);
+      } catch (e) {
+        console.warn(e.message);
       }
-
-      const dropzone = new Dropzone("#detDropzone", {
-        paramName       : fileParamName,
-        url             : context.updateUrl,
-        autoProcessQueue: true,
-        maxFilesize     : 60,
-        acceptedFiles   : '.doc,.docx,.pdf',
-        addRemoveLinks  : true,
-        init            : function () {
-          this.on("complete", function (file) {
-            new Promise((res) => {
-              res(context.props.fetchClient(context.props.client._id));
-            }).then(() => this.setState({client: context.client.active}));
-          })
-        }
-      });
     }
-
 
     this.disableGoAway = function (e) {
       e.preventDefault();
@@ -55,7 +53,7 @@ class Details extends Component {
       [].forEach.call(document.querySelectorAll("#deleteFile input"), function (element) {
         if (element.checked) {
           context.props.deleteFile(context.props.client, element.value);
-          context.props.fetchClient(context.props.client._id);
+          context.updateClient();
         }
       });
     }
@@ -102,6 +100,31 @@ class Details extends Component {
   }
 }
 
+
+function createDropzone(client, cb) {
+
+  const updateUrl = '/client/' + client._id + '/upload';
+
+  function fileParamName() {
+    return 'files'
+  }
+
+  const dropzone = new Dropzone("#detDropzone", {
+    paramName       : fileParamName,
+    url             : updateUrl,
+    autoProcessQueue: true,
+    maxFilesize     : 60,
+    acceptedFiles   : '.doc,.docx,.pdf',
+    addRemoveLinks  : true,
+    init            : function () {
+      this.on("complete", function () {
+        cb(client._id);
+        console.log('props.client!!!', client);
+      })
+    }
+  });
+}
+
 // from state to property
 function mapStateToProps(state) {
   return {
@@ -109,4 +132,8 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps, {deleteFile: deleteFile, fetchClient: fetchClient})(Details);
+function matchDispatchToProps(dispatch) {
+  return bindActionCreators({deleteFile: deleteFile, fetchClient: fetchClient}, dispatch)
+}
+
+export default connect(mapStateToProps, matchDispatchToProps)(Details);

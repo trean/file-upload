@@ -2,6 +2,7 @@ export const SET_CLIENTS = 'SET_CLIENTS';
 export const DELETE_FILE = 'DELETE_FILE';
 export const FETCH_CLIENT = 'DELETE_FILE';
 
+
 export const select = (client) => {
   return {
     type: 'CLIENT_SELECTED',
@@ -22,13 +23,9 @@ export function updateClient(client) {
 export const fetchClient = (clientId) => {
   const deleteUrt = '/client/' + clientId;
   return dispatch => {
-    fetch(deleteUrt, {method: 'GET'})
-      .then(client => {
-        console.log('fetched', client);
+    fetch(deleteUrt, {method: 'GET'}).then(res => res.json()).then(client => {
         dispatch(updateClient(client));
-
-      })
-      .catch(e => console.error(e));
+    }).catch(e => console.error(e));
   }
 }
 
@@ -42,13 +39,9 @@ export function setClients(clients) {
 
 export const fetchClientsList = () => {
   return dispatch => {
-    fetch('/clients', {method: 'GET'})
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
+    fetch('/clients', {method: 'GET'}).then(res => res.json()).then(data => {
         dispatch(setClients(data))
-      })
-      .catch(e => console.error(e));
+    }).catch(e => console.error(e));
   }
 }
 
@@ -64,16 +57,10 @@ export function updateClientAfterDelete(client) {
 export const deleteFile = (client, file) => {
   const deleteUrt = '/client/' + client._id + '/file/' + file;
   return dispatch => {
-    fetch(deleteUrt, {method: 'DELETE'})
-      .then(data => {
+    fetch(deleteUrt, {method: 'DELETE'}).then(data => {
         let idx = client.files.findIndex(item => item._id === file);
         client.files.splice(idx, 1);
-
-        console.log(client)
         dispatch(updateClientAfterDelete(client));
-
-      })
-      //.then(data => dispatch(setClients(data)))
-      .catch(e => console.error(e));
+    }).catch(e => console.error(e));
   }
 }
