@@ -86,7 +86,7 @@ class Details extends Component {
             {files.map((file, idx) => {
               this.deleteUrt = '/client/' + this.props.client._id + '/file/' + file._id;
               let fileName   = file.path.replace(/^.*[\\\/]/, '');
-              return <li key={idx}><a href={file.path}>{fileName}</a><input value={file._id} type="checkbox"/></li>
+              return <li key={idx}><a href={'../' + file.path}>{fileName}</a><input value={file._id} type="checkbox"/></li>
             })}
 
           </ul>
