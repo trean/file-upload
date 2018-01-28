@@ -4,7 +4,7 @@ import {
   Route,
   Link
 } from 'react-router-dom';
-import Images from './UploadNew';
+import UploadNew from './UploadNew';
 import ClientsContainer from '../components/ClientsList';
 import Details from '../components/Details';
 
@@ -20,7 +20,7 @@ class Header extends Component {
         </ul>
         <hr/>
 
-        <Route exact path="/" component={Images}/>
+        <Route exact path="/" component={UploadNew}/>
         <Route exact path="/list" component={ClientsContainer}/>
         <Route exact path="/details/:clientId" component={Details}/>
         <Route exact path="/details" render={() => (

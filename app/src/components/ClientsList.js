@@ -1,6 +1,5 @@
 import React from 'react';
 import ClientsContainer from '../containers/clients-container';
-//TODO: css
 
 const ClientsList = () => (
   <div>
