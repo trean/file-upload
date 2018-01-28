@@ -32,9 +32,10 @@ const express    = require('express'),
         }),
         fileFilter: function (req, file, next) {
           if (!file) next();
-          const doc = file.mimetype.endsWith('/msword'),
-                pdf = file.mimetype.endsWith('/pdf');
-          if (doc || pdf) {
+          const doc  = file.mimetype.endsWith('/msword'),
+                docx = file.mimetype.endsWith('vnd.openxmlformats-officedocument.wordprocessingml.document'),
+                pdf  = file.mimetype.endsWith('/pdf');
+          if (doc || docx || pdf) {
             next(null, true);
           } else {
             next({message: 'File type not supported'}, false);
