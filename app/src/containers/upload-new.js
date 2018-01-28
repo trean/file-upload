@@ -1,6 +1,4 @@
 import React, {Component} from 'react';
-import {connect} from 'react-redux';
-import {fetchClientsList} from '../actions/index';
 import Dropzone from 'dropzone';
 
 Dropzone.autoDiscover = false;
@@ -13,8 +11,6 @@ class UploadNewContainer extends Component {
   }
 
   componentDidMount() {
-    let context = this;
-    this.props.fetchClientsList();
     this.uploadUrl = '/upload';
 
     function fileParamName() {
@@ -50,8 +46,6 @@ class UploadNewContainer extends Component {
         this.on("complete", function (file) {
           document.getElementById("uploadNew").reset();
           dzClosure.removeFile(file);
-
-          context.props.fetchClientsList();
         });
       }
     });
@@ -71,12 +65,4 @@ class UploadNewContainer extends Component {
   }
 }
 
-// from state to property
-function mapStateToProps(state) {
-  return {
-    clients: state.clients
-  }
-}
-
-export default connect(mapStateToProps, {fetchClientsList})(UploadNewContainer);
-
+export default UploadNewContainer;

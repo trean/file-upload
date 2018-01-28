@@ -17,8 +17,6 @@ const store = createStore(
   )
 );
 
-//import registerServiceWorker from './registerServiceWorker';
-
 ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter>
@@ -27,6 +25,4 @@ ReactDOM.render(
   </Provider>
 
   , document.getElementById('root'));
-
-//registerServiceWorker();
 

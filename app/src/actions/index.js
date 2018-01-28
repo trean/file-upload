@@ -11,7 +11,6 @@ export const select = (client) => {
   }
 }
 
-
 /** fetch one client */
 export function updateClient(client) {
   return {
@@ -64,7 +63,7 @@ export const deleteFile = (client, filesObj) => {
         'Content-Type': 'application/json'
       },
       body   : JSON.stringify(filesObj)
-    }).then(data => {
+    }).then(() => {
       filesObj.files.forEach(file => {
         let idx = client.files.findIndex(item => item._id === file);
         client.files.splice(idx, 1);

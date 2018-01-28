@@ -38,7 +38,7 @@ function mapStateToProps(state) {
 }
 
 function matchDispatchToProps(dispatch) {
-  return bindActionCreators({select: select, fetchClientsList: fetchClientsList}, dispatch)
+  return bindActionCreators({select: select, fetchClientsList: fetchClientsList}, dispatch);
 }
 
 export default connect(mapStateToProps, matchDispatchToProps)(ClientsContainer);
