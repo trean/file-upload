@@ -21,39 +21,32 @@ class Details extends Component {
   }
 
 
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.client !== this.props.client) {
-      this.setState({client: nextProps.client});
-      console.log('nextProps', nextProps);
-    }
-  }
-
-
   componentDidMount() {
     let context = this;
+    // if client object is not at props
     if (!this.props['client']) {
       // TODO: there should be more elegant way to do this
       let id = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
-      console.log(id);
       this.updateClient(id);
       // TODO: and this
       setTimeout(() => {
-        createDropzone(this.props.client, this.updateClient, this);
+        createDropzone(this.props.client, this);
       }, 500);
     } else {
-      try {
-        createDropzone(this.props.client, this.updateClient, this);
-      } catch (e) {
-        console.warn(e.message);
-      }
+      createDropzone(this.props.client, this);
     }
 
+    /**
+     * Handler of event to request deleting files chose at form
+     * @param {object} e - event
+     */
     this.deleteFiles = function (e) {
       e.preventDefault();
       e.stopPropagation();
       let obj   = {};
       obj.files = [];
-      [].forEach.call(document.querySelectorAll("#deleteFile input"), function (element) {
+      const fileCheckboxes = document.querySelectorAll("#deleteFile input");
+      [].forEach.call(fileCheckboxes, function (element) {
         if (element.checked) obj.files.push(element.value);
       });
       if (obj.files.length > 0) {
@@ -68,33 +61,24 @@ class Details extends Component {
 
   render() {
 
+    // if we have not client object by any reason
     if (!this.props.client) {
       return (<p>Choose <Link to="/list">client</Link>.</p>);
     }
 
-    // prepare files to view
-    const files          = this.props.client.files || [],
-          filesListItems = files.map((file, idx) => {
-            this.deleteUrt = '/client/' + this.props.client._id + '/file/' + file._id;
-            let fileName   = file.path.replace(/^.*[\\\/]/, '');
-      return <li key={idx}><a href={file.path}>{fileName}</a><input value={file._id} type="checkbox"/></li>
-    });
-
+    const files = this.props.client.files || [];
     return (
       <div>
         <h3>{this.props.client.clientName}</h3>
-        <form id="deleteFile" action={this.deleteUrt} encType="multipart/form-data" method="DELETE">
+        <form id="deleteFile" action={this.deleteUrt}>
           <ul>
-
-
             {files.map((file, idx) => {
               this.deleteUrt = '/client/' + this.props.client._id + '/file/' + file._id;
               let fileName   = file.path.replace(/^.*[\\\/]/, '');
               return <li key={idx}><a href={'../' + file.path}>{fileName}</a><input value={file._id} type="checkbox"/></li>
             })}
-
           </ul>
-          {filesListItems.length > 0 ?
+          {files.length > 0 ?
             <button type="submit" onClick={(e) => this.deleteFiles(e)}>Delete</button> : null}
         </form>
 
@@ -107,7 +91,7 @@ class Details extends Component {
 }
 
 
-function createDropzone(client, cb, t) {
+function createDropzone(client, t) {
 
   const updateUrl = '/client/' + client._id + '/upload';
 
@@ -124,8 +108,7 @@ function createDropzone(client, cb, t) {
     addRemoveLinks  : true,
     init            : function () {
       this.on("complete", function () {
-        cb(client._id);
-        console.log('props.client!!!', client);
+        t.updateClient(client._id);
       })
     }
   });
