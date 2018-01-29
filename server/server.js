@@ -175,6 +175,9 @@ app.delete('/client/:clientId/file/:fileId', function(req, res){
   })
 });
 
+/**
+ * This API will delete all files from request.
+ */
 app.post('/client/:clientId/delete_many', function (req, res) {
   const clientId         = req.params.clientId;
   const filesToDeleteIds = req.body.files;
@@ -271,7 +274,6 @@ function processUploadedData(client, req) {
 }
 
 
-// TODO: update array
 function updateClientFilesAtDB(client, pathToFiles) {
   return new Promise((resolve, reject) => {
     let files = client.get('files');

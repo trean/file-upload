@@ -24,15 +24,17 @@ class Details extends Component {
 
   componentDidMount() {
     let context = this;
-    // if client object is not at props
+    // if client object is not at props:
+    // case when we start the app from details screen and don't have a history yet
     if (!this.props['client']) {
       let id = this.props.match.params.clientId;
       this.updateClient(id);
-      // TODO: and this
+      // TODO: it would be good, if this block uses React way to create the dropzone after rerender of the component
       setTimeout(() => {
         createDropzone(this.props.client, this);
       }, 500);
     } else {
+      // else part for usual case, when we have props
       createDropzone(this.props.client, this);
     }
 
