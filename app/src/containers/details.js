@@ -5,6 +5,7 @@ import {bindActionCreators} from 'redux';
 import {Link} from 'react-router-dom';
 import {deleteFile} from '../actions/index';
 import {fetchClient} from '../actions/index';
+import {withRouter} from 'react-router-dom';
 import '../index.css';
 
 class Details extends Component {
@@ -25,8 +26,7 @@ class Details extends Component {
     let context = this;
     // if client object is not at props
     if (!this.props['client']) {
-      // TODO: there should be more elegant way to do this
-      let id = window.location.href.substr(window.location.href.lastIndexOf('/') + 1);
+      let id = this.props.match.params.clientId;
       this.updateClient(id);
       // TODO: and this
       setTimeout(() => {
@@ -125,4 +125,4 @@ function matchDispatchToProps(dispatch) {
   return bindActionCreators({deleteFile: deleteFile, fetchClient: fetchClient}, dispatch)
 }
 
-export default connect(mapStateToProps, matchDispatchToProps)(Details);
+export default connect(mapStateToProps, matchDispatchToProps)(withRouter(Details));
