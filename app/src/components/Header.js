@@ -13,10 +13,10 @@ class Header extends Component {
   render() {
     return (
       <Router>
-      <div>
-        <ul>
-          <li><Link to="/">Add new client</Link></li>
-          <li><Link to="/list">List of clients</Link></li>
+      <div  className="navbar justify-content-between">
+        <ul className="nav justify-content-end">
+          <li className="nav-item"><span className="nav-link text-dark"><Link to="/">Add new client</Link></span></li>
+          <li className="nav-item"><span className="nav-link text-dark"><Link to="/list">List of clients</Link></span></li>
         </ul>
         <hr/>
 

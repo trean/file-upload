@@ -5,7 +5,6 @@ export default function (state = null, action) {
     case 'SAVE_CLIENT':
       return action.payload;
     case 'FETCH_CLIENT':
-      console.log('fetched state');
       return action.client;
     case 'DELETE_FILE':
       return action.client;

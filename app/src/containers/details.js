@@ -71,17 +71,17 @@ class Details extends Component {
     const files = this.props.client.files || [];
     return (
       <div>
-        <h3>{this.props.client.clientName}</h3>
+        <h4 className="text-left">Client Name: <span className="font-weight-normal">{this.props.client.clientName}</span></h4>
         <form id="deleteFile" action={this.deleteUrt}>
-          <ul>
+          <ul className="list-group mb-3">
             {files.map((file, idx) => {
               this.deleteUrt = '/client/' + this.props.client._id + '/file/' + file._id;
               let fileName   = file.path.replace(/^.*[\\\/]/, '');
-              return <li key={idx}><a href={'../' + file.path}>{fileName}</a><input value={file._id} type="checkbox"/></li>
+              return <li className="list-group-item justify-content-between" key={idx}><a href={'../' + file.path}>{fileName}</a><input value={file._id} type="checkbox"/></li>
             })}
           </ul>
           {files.length > 0 ?
-            <button type="submit" onClick={(e) => this.deleteFiles(e)}>Delete</button> : null}
+            <button className="btn btn-primary mb-3" type="submit" onClick={(e) => this.deleteFiles(e)}>Delete</button> : null}
         </form>
 
         <form action={this.updateUrl} encType="multipart/form-data" method="POST">

@@ -9,7 +9,7 @@ class ClientsContainer extends Component {
   showList() {
     return this.props.clients.map(client => {
       return (
-        <li onClick={() => this.props.select(client)} key={client.id}><Link
+        <li className="list-group-item" onClick={() => this.props.select(client)} key={client.id}><Link
           to={'/details/' + client._id}>{client.clientName}</Link></li>
       )
     })
@@ -22,7 +22,7 @@ class ClientsContainer extends Component {
   render() {
     return (
       <div>
-        <ul>
+        <ul  className="list-group">
           {this.showList()}
         </ul>
       </div>

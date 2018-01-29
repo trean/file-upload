@@ -56,9 +56,13 @@ class UploadNewContainer extends Component {
     return (
       <div>
         <form id="uploadNew" action={this.uploadUrl} encType="multipart/form-data" method="POST">
-          <input id="userName" type="text" name="userName" placeholder="Client Name"/>
-          <div className="dropzone" id="myDropzone"></div>
-          <button type="submit" id="submit-all"> Save</button>
+          <div className="form-group">
+            <input className="form-control" id="userName" type="text" name="userName" placeholder="Client Name"/>
+          </div>
+          <div className="form-group">
+            <div className="dropzone" id="myDropzone"></div>
+          </div>
+          <button className="btn btn-primary" type="submit" id="submit-all"> Save</button>
         </form>
       </div>
     )
